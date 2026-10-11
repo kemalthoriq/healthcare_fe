@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarX } from "lucide-react";
 import { id } from "react-day-picker/locale";
-import { QueryError } from "@/components/booking/query-error";
+import { QueryError } from "@/components/query-error";
 import { StepHeader } from "@/components/booking/step-header";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";

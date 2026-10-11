@@ -2,11 +2,17 @@ import Link from "next/link";
 import { Sparkle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function Logo({ className }: { className?: string }) {
+type LogoProps = {
+  className?: string;
+  href?: string;
+  label?: string;
+};
+
+export function Logo({ className, href = "/", label = "Lumière Aesthetic Clinic, ke beranda" }: LogoProps) {
   return (
     <Link
-      href="/"
-      aria-label="Lumière Aesthetic Clinic, ke beranda"
+      href={href}
+      aria-label={label}
       className={cn("inline-flex items-center gap-2 rounded-sm", className)}
     >
       <Sparkle aria-hidden="true" strokeWidth={1.75} className="size-6 fill-blush-300 text-blush-300" />

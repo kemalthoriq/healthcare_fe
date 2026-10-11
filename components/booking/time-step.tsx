@@ -2,7 +2,7 @@
 
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { CalendarClock } from "lucide-react";
-import { QueryError } from "@/components/booking/query-error";
+import { QueryError } from "@/components/query-error";
 import { StepHeader } from "@/components/booking/step-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

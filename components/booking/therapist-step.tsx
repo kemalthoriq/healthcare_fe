@@ -1,6 +1,6 @@
 import { Users } from "lucide-react";
 import { ChoiceCard } from "@/components/booking/choice-card";
-import { QueryError } from "@/components/booking/query-error";
+import { QueryError } from "@/components/query-error";
 import { StepHeader } from "@/components/booking/step-header";
 import { EmptyState } from "@/components/catalog/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";

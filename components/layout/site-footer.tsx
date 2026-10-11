@@ -13,7 +13,7 @@ export function SiteFooter() {
           </p>
         </div>
         <nav aria-label="Navigasi footer">
-          <p className="text-overline text-neutral-600">Jelajahi</p>
+          <p className="type-overline text-neutral-600">Jelajahi</p>
           <ul className="mt-4 flex flex-col gap-3">
             {publicNavItems.map((item) => (
               <li key={item.href}>

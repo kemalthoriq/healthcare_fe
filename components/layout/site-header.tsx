@@ -6,7 +6,7 @@ import { publicNavItems } from "@/components/layout/nav-items";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
       <div className="container-page flex h-16 items-center justify-between gap-4 md:h-20">
         <Logo />
         <nav aria-label="Navigasi utama" className="hidden md:block">

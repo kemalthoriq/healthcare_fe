@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function CheckBookingForm() {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const router = useRouter();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -25,10 +27,10 @@ export function CheckBookingForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-3">
-      <Label htmlFor="booking-code">Sudah punya kode booking?</Label>
+      <Label htmlFor={f("booking-code")}>Sudah punya kode booking?</Label>
       <div className="flex flex-col gap-2 sm:flex-row">
         <Input
-          id="booking-code"
+          id={f("booking-code")}
           value={code}
           onChange={(event) => setCode(event.target.value)}
           placeholder="LMR-XXXX-XXXX"
@@ -36,7 +38,7 @@ export function CheckBookingForm() {
           autoCapitalize="characters"
           spellCheck={false}
           aria-invalid={!!error}
-          aria-describedby={error ? "booking-code-error" : undefined}
+          aria-describedby={error ? f("booking-code-error") : undefined}
           className="font-mono uppercase"
         />
         <Button type="submit" variant="outline" className="shrink-0">
@@ -45,7 +47,7 @@ export function CheckBookingForm() {
         </Button>
       </div>
       {error && (
-        <p id="booking-code-error" className="text-sm text-danger">
+        <p id={f("booking-code-error")} className="text-sm text-danger">
           {error}
         </p>
       )}

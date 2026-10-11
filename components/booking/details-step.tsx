@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,6 +63,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 }
 
 export function DetailsStep({ defaultValues, serverErrors, submitting, onChange, onSubmit, onBack }: DetailsStepProps) {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const form = useForm<DetailsInput, unknown, DetailsValues>({
     resolver: zodResolver(detailsSchema),
     defaultValues,
@@ -86,7 +88,7 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
   }, [serverErrors, setError]);
 
   const describedBy = (field: DetailsField, help?: string) =>
-    [help, errors[field] ? `${field}-error` : undefined].filter(Boolean).join(" ") || undefined;
+    [help, errors[field] ? f(`${field}-error`) : undefined].filter(Boolean).join(" ") || undefined;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
@@ -97,19 +99,19 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
       />
 
       <div className="space-y-2">
-        <Label htmlFor="name">Nama lengkap</Label>
+        <Label htmlFor={f("name")}>Nama lengkap</Label>
         <Input
-          id="name"
+          id={f("name")}
           autoComplete="name"
           aria-invalid={!!errors.name}
           aria-describedby={describedBy("name")}
           {...register("name")}
         />
-        <FieldError id="name-error" message={errors.name?.message} />
+        <FieldError id={f("name-error")} message={errors.name?.message} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Nomor WhatsApp</Label>
+        <Label htmlFor={f("phone")}>Nomor WhatsApp</Label>
         <div
           className={cn(
             "flex h-11 items-stretch overflow-hidden rounded-md border border-input bg-card shadow-xs transition-colors focus-within:border-sage-600 focus-within:ring-3 focus-within:ring-sage-100",
@@ -120,48 +122,48 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
             +62
           </span>
           <input
-            id="phone"
+            id={f("phone")}
             type="tel"
             inputMode="tel"
             autoComplete="tel-national"
             placeholder="81234567890"
             aria-invalid={!!errors.phone}
-            aria-describedby={describedBy("phone", "phone-help")}
+            aria-describedby={describedBy("phone", f("phone-help"))}
             className="min-w-0 flex-1 bg-transparent px-3.5 text-base outline-none placeholder:text-neutral-400"
             {...register("phone")}
           />
         </div>
-        <p id="phone-help" className="text-sm text-muted-foreground">
+        <p id={f("phone-help")} className="text-sm text-muted-foreground">
           Nomor ini menjadi identitas Anda di klinik.
         </p>
-        <FieldError id="phone-error" message={errors.phone?.message} />
+        <FieldError id={f("phone-error")} message={errors.phone?.message} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">
+        <Label htmlFor={f("email")}>
           Email <span className="font-normal text-muted-foreground">(opsional)</span>
         </Label>
         <Input
-          id="email"
+          id={f("email")}
           type="email"
           inputMode="email"
           autoComplete="email"
           aria-invalid={!!errors.email}
-          aria-describedby={describedBy("email", "email-help")}
+          aria-describedby={describedBy("email", f("email-help"))}
           {...register("email")}
         />
-        <p id="email-help" className="text-sm text-muted-foreground">
-          Untuk menerima kode dan link booking.
+        <p id={f("email-help")} className="text-sm text-muted-foreground">
+          Agar klinik bisa menghubungi Anda lewat email.
         </p>
-        <FieldError id="email-error" message={errors.email?.message} />
+        <FieldError id={f("email-error")} message={errors.email?.message} />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="note">
+        <Label htmlFor={f("note")}>
           Catatan <span className="font-normal text-muted-foreground">(opsional)</span>
         </Label>
         <Textarea
-          id="note"
+          id={f("note")}
           rows={3}
           maxLength={MAX_NOTE}
           placeholder="Keluhan kulit, alergi, atau hal lain yang perlu kami ketahui"
@@ -169,7 +171,7 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
           aria-describedby={describedBy("note")}
           {...register("note")}
         />
-        <FieldError id="note-error" message={errors.note?.message} />
+        <FieldError id={f("note-error")} message={errors.note?.message} />
       </div>
 
       <div className="space-y-2">
@@ -179,7 +181,7 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
             name="consent"
             render={({ field }) => (
               <Checkbox
-                id="consent"
+                id={f("consent")}
                 ref={field.ref}
                 checked={field.value}
                 onCheckedChange={(checked) => field.onChange(checked === true)}
@@ -190,11 +192,11 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
               />
             )}
           />
-          <Label htmlFor="consent" className="text-sm leading-relaxed font-normal text-neutral-700">
+          <Label htmlFor={f("consent")} className="text-sm leading-relaxed font-normal text-neutral-700">
             Saya setuju data saya digunakan klinik untuk keperluan booking dan riwayat perawatan.
           </Label>
         </div>
-        <FieldError id="consent-error" message={errors.consent?.message} />
+        <FieldError id={f("consent-error")} message={errors.consent?.message} />
       </div>
 
       <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={submitting}>

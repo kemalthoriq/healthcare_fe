@@ -1,5 +1,5 @@
 import { api } from "@/lib/api/client";
-import type { BookingStatus, Therapist, Treatment } from "@/lib/api/types";
+import type { BookingStatus } from "@/lib/api/types";
 
 export type AdminBooking = {
   id: number;
@@ -75,16 +75,4 @@ export function rescheduleAdminBooking(id: number, startAt: string) {
 
 export function saveTreatmentNote(id: number, content: string) {
   return api.put<AdminBooking>(`/admin/bookings/${id}/note`, { content });
-}
-
-export function fetchAdminTherapists() {
-  return api.get<Therapist[]>("/admin/therapists");
-}
-
-export function fetchAdminTherapist(id: number) {
-  return api.get<Therapist>(`/admin/therapists/${id}`);
-}
-
-export function fetchAdminTreatment(id: number) {
-  return api.get<Treatment>(`/admin/treatments/${id}`);
 }

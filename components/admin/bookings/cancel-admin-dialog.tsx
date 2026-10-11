@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +24,8 @@ type CancelAdminDialogProps = {
 };
 
 export function CancelAdminDialog({ pending, onCancel }: CancelAdminDialogProps) {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
@@ -60,18 +62,18 @@ export function CancelAdminDialog({ pending, onCancel }: CancelAdminDialogProps)
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
-            <Label htmlFor="admin-cancel-reason">Alasan</Label>
+            <Label htmlFor={f("admin-cancel-reason")}>Alasan</Label>
             <Textarea
-              id="admin-cancel-reason"
+              id={f("admin-cancel-reason")}
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               maxLength={MAX_REASON}
               rows={3}
               aria-invalid={!!error}
-              aria-describedby={error ? "admin-cancel-reason-error" : undefined}
+              aria-describedby={error ? f("admin-cancel-reason-error") : undefined}
             />
             {error && (
-              <p id="admin-cancel-reason-error" className="text-sm text-danger">
+              <p id={f("admin-cancel-reason-error")} className="text-sm text-danger">
                 {error}
               </p>
             )}

@@ -69,8 +69,8 @@ async function TreatmentDetail({ params }: Pick<PageProps<"/treatment/[slug]">, 
         </div>
       </div>
 
-      <section aria-labelledby="terapis-heading" className="space-y-6">
-        <h2 id="terapis-heading" className="type-h2 text-neutral-900">
+      <section className="space-y-6">
+        <h2 className="type-h2 text-neutral-900">
           Terapis yang menangani
         </h2>
         <TherapistGrid

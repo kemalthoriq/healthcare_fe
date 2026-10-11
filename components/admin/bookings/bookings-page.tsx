@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { CalendarSearch } from "lucide-react";
@@ -14,12 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  adminBookingsKey,
-  fetchAdminBookings,
-  fetchAdminTherapists,
-  type AdminBookingFilters,
-} from "@/lib/api/admin-bookings";
+import { adminBookingsKey, fetchAdminBookings, type AdminBookingFilters } from "@/lib/api/admin-bookings";
+import { adminTherapistsKey, fetchAdminTherapists } from "@/lib/api/admin-catalog";
 import type { BookingStatus } from "@/lib/api/types";
 import { bookingStatusLabel } from "@/lib/booking-status";
 import { isDateKey, toDateKey } from "@/lib/dates";
@@ -47,6 +43,8 @@ function isStatus(value: string | null): value is BookingStatus {
 }
 
 export function BookingsPage() {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const user = useAdminUser();
   const router = useRouter();
   const pathname = usePathname();
@@ -81,7 +79,7 @@ export function BookingsPage() {
   });
 
   const therapistsQuery = useQuery({
-    queryKey: ["admin-therapists"],
+    queryKey: adminTherapistsKey,
     queryFn: fetchAdminTherapists,
     enabled: user.role === "admin",
   });
@@ -131,9 +129,9 @@ export function BookingsPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
-            <Label htmlFor="filter-status">Status</Label>
+            <Label htmlFor={f("filter-status")}>Status</Label>
             <NativeSelect
-              id="filter-status"
+              id={f("filter-status")}
               value={status ?? ""}
               onChange={(event) => update({ status: event.target.value || null })}
             >
@@ -148,9 +146,9 @@ export function BookingsPage() {
 
           {user.role === "admin" && (
             <div className="space-y-2">
-              <Label htmlFor="filter-therapist">Terapis</Label>
+              <Label htmlFor={f("filter-therapist")}>Terapis</Label>
               <NativeSelect
-                id="filter-therapist"
+                id={f("filter-therapist")}
                 value={therapist}
                 onChange={(event) => update({ therapist: event.target.value || null })}
               >
@@ -168,9 +166,9 @@ export function BookingsPage() {
           {range === "custom" && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="filter-from">Dari tanggal</Label>
+                <Label htmlFor={f("filter-from")}>Dari tanggal</Label>
                 <Input
-                  id="filter-from"
+                  id={f("filter-from")}
                   type="date"
                   value={from}
                   max={to || undefined}
@@ -178,9 +176,9 @@ export function BookingsPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="filter-to">Sampai tanggal</Label>
+                <Label htmlFor={f("filter-to")}>Sampai tanggal</Label>
                 <Input
-                  id="filter-to"
+                  id={f("filter-to")}
                   type="date"
                   value={to}
                   min={from || undefined}

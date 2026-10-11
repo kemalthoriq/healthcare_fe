@@ -1,4 +1,4 @@
-import { CalendarCheck, LayoutDashboard, type LucideIcon } from "lucide-react";
+import { CalendarCheck, LayoutDashboard, Sparkles, Users, type LucideIcon } from "lucide-react";
 import type { AdminRole } from "@/lib/api/auth";
 
 export type AdminNavItem = {
@@ -12,6 +12,8 @@ export const adminNavItems: AdminNavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "therapist"] },
   { href: "/admin/booking", label: "Booking", icon: CalendarCheck, roles: ["admin"] },
   { href: "/admin/booking", label: "Booking Saya", icon: CalendarCheck, roles: ["therapist"] },
+  { href: "/admin/treatment", label: "Treatment", icon: Sparkles, roles: ["admin"] },
+  { href: "/admin/terapis", label: "Terapis", icon: Users, roles: ["admin"] },
 ];
 
 export function navItemsFor(role: AdminRole): AdminNavItem[] {

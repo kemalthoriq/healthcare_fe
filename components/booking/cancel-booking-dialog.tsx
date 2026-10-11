@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
@@ -22,6 +22,8 @@ import { cancelBooking } from "@/lib/api/booking";
 import { isApiError } from "@/lib/api/client";
 
 export function CancelBookingDialog({ code }: { code: string }) {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -59,11 +61,11 @@ export function CancelBookingDialog({ code }: { code: string }) {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
-          <Label htmlFor="cancel-reason">
+          <Label htmlFor={f("cancel-reason")}>
             Alasan <span className="font-normal text-muted-foreground">(opsional)</span>
           </Label>
           <Textarea
-            id="cancel-reason"
+            id={f("cancel-reason")}
             value={reason}
             onChange={(event) => setReason(event.target.value)}
             maxLength={200}

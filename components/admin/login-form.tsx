@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,8 @@ const schema = z.object({
 type LoginValues = z.infer<typeof schema>;
 
 export function LoginForm() {
+  const uid = useId();
+  const f = (name: string) => `${uid}-${name}`;
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -65,35 +67,35 @@ export function LoginForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor={f("email")}>Email</Label>
         <Input
-          id="email"
+          id={f("email")}
           type="email"
           autoComplete="username"
           autoFocus
           aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? "email-error" : undefined}
+          aria-describedby={errors.email ? f("email-error") : undefined}
           {...form.register("email")}
         />
         {errors.email && (
-          <p id="email-error" className="text-sm text-danger">
+          <p id={f("email-error")} className="text-sm text-danger">
             {errors.email.message}
           </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor={f("password")}>Password</Label>
         <Input
-          id="password"
+          id={f("password")}
           type="password"
           autoComplete="current-password"
           aria-invalid={!!errors.password}
-          aria-describedby={errors.password ? "password-error" : undefined}
+          aria-describedby={errors.password ? f("password-error") : undefined}
           {...form.register("password")}
         />
         {errors.password && (
-          <p id="password-error" className="text-sm text-danger">
+          <p id={f("password-error")} className="text-sm text-danger">
             {errors.password.message}
           </p>
         )}

@@ -63,3 +63,19 @@ export function formatPhone(phone: string): string {
   const groups = [local.slice(0, 3), local.slice(3, 7), local.slice(7)].filter(Boolean);
   return `+62 ${groups.join("-")}`;
 }
+
+const dayMonthFormat = new Intl.DateTimeFormat(LOCALE, { timeZone: TIME_ZONE, day: "numeric", month: "short" });
+const dayFormat = new Intl.DateTimeFormat(LOCALE, { timeZone: TIME_ZONE, day: "numeric" });
+
+export function formatDateRange(start: string, end: string): string {
+  if (start === end) {
+    return formatDateShort(start);
+  }
+  if (start.slice(0, 7) === end.slice(0, 7)) {
+    return `${dayFormat.format(toDate(start))}–${formatDateShort(end)}`;
+  }
+  if (start.slice(0, 4) === end.slice(0, 4)) {
+    return `${dayMonthFormat.format(toDate(start)).replace(/\./g, "")} – ${formatDateShort(end)}`;
+  }
+  return `${formatDateShort(start)} – ${formatDateShort(end)}`;
+}

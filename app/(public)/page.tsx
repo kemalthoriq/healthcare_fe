@@ -5,13 +5,15 @@ import { SectionHeading } from "@/components/catalog/section-heading";
 import { TherapistGrid } from "@/components/catalog/therapist-grid";
 import { TreatmentGrid } from "@/components/catalog/treatment-grid";
 import { WhyUs } from "@/components/catalog/why-us";
-import { getTherapists, getTreatments } from "@/lib/api/catalog";
+import { PromoCard } from "@/components/catalog/promo-card";
+import { getPromos, getTherapists, getTreatments } from "@/lib/api/catalog";
 
 const FEATURED_TREATMENTS = 6;
 const FEATURED_THERAPISTS = 4;
+const FEATURED_PROMOS = 2;
 
 export default async function HomePage() {
-  const [treatments, therapists] = await Promise.all([getTreatments(), getTherapists()]);
+  const [treatments, therapists, promos] = await Promise.all([getTreatments(), getTherapists(), getPromos()]);
 
   return (
     <>
@@ -35,6 +37,32 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {promos.length > 0 && (
+        <section className="bg-blush-50 py-12 lg:py-20">
+          <div className="container-page space-y-8">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <SectionHeading overline="Promo" title="Promo yang sedang berlaku" />
+              {promos.length > FEATURED_PROMOS && (
+                <Link
+                  href="/promo"
+                  className="inline-flex items-center gap-1.5 rounded-sm font-semibold text-sage-700 hover:underline"
+                >
+                  Semua promo
+                  <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-4" />
+                </Link>
+              )}
+            </div>
+            <ul className="grid gap-6 md:grid-cols-2">
+              {promos.slice(0, FEATURED_PROMOS).map((promo) => (
+                <li key={promo.id} className="flex [&>article]:w-full">
+                  <PromoCard promo={promo} compact />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       <section className="bg-background py-12 lg:py-20">
         <div className="container-page space-y-8">

@@ -8,11 +8,17 @@ type BookingForMessage = {
   code: string;
 };
 
-export function bookingWhatsAppUrl(booking: BookingForMessage): string {
-  const phone = booking.patient_phone.replace(/\D/g, "");
-  const text = [
-    `Halo ${booking.patient_name}, kami dari Lumière Aesthetic Clinic.`,
-    `Terkait booking ${booking.treatment_name} pada ${formatDateLong(booking.start_at)} pukul ${formatTime(booking.start_at)} (kode ${booking.code}).`,
-  ].join(" ");
-  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+export function whatsAppUrl(phone: string, text?: string): string {
+  const digits = phone.replace(/\D/g, "");
+  return text ? `https://wa.me/${digits}?text=${encodeURIComponent(text)}` : `https://wa.me/${digits}`;
+}
+
+export function bookingWhatsAppUrl(booking: BookingForMessage, clinicName: string): string {
+  return whatsAppUrl(
+    booking.patient_phone,
+    [
+      `Halo ${booking.patient_name}, kami dari ${clinicName}.`,
+      `Terkait booking ${booking.treatment_name} pada ${formatDateLong(booking.start_at)} pukul ${formatTime(booking.start_at)} (kode ${booking.code}).`,
+    ].join(" "),
+  );
 }

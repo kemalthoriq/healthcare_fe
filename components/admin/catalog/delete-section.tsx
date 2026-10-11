@@ -11,10 +11,16 @@ import { isApiError } from "@/lib/api/client";
 type DeleteSectionProps = {
   entity: string;
   name: string;
+  description?: string;
   onDelete: () => Promise<unknown>;
 };
 
-export function DeleteSection({ entity, name, onDelete }: DeleteSectionProps) {
+export function DeleteSection({
+  entity,
+  name,
+  description = "Hanya bisa dihapus bila belum pernah dibooking. Bila sudah, nonaktifkan saja agar riwayat tetap utuh.",
+  onDelete,
+}: DeleteSectionProps) {
   const [pending, setPending] = useState(false);
 
   async function handleDelete() {
@@ -31,7 +37,7 @@ export function DeleteSection({ entity, name, onDelete }: DeleteSectionProps) {
   return (
     <SectionCard
       title={`Hapus ${entity.toLowerCase()}`}
-      description={`Hanya bisa dihapus bila belum pernah dibooking. Bila sudah, nonaktifkan saja agar riwayat tetap utuh.`}
+      description={description}
       tone="danger"
     >
       <ConfirmActionDialog

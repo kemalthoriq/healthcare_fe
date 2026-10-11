@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useId } from "react";
-import Image from "next/image";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CircleAlert, Loader2 } from "lucide-react";
 import { FormField, fieldDescribedBy } from "@/components/admin/form-field";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { TherapistInput } from "@/lib/api/admin-catalog";
 import { applyApiError } from "@/lib/form-errors";
-import { isOptimizableImage } from "@/lib/images";
-import { initials } from "@/lib/initials";
 
 const schema = z.object({
   name: z.string().trim().min(1, "Nama wajib diisi.").max(100, "Nama maksimal 100 karakter."),
@@ -47,8 +45,6 @@ export function TherapistForm({ initial = emptyTherapist, submitLabel, resetAfte
   const form = useForm<TherapistInput>({ resolver: zodResolver(schema), defaultValues: initial });
   const { register, control, handleSubmit, setError, formState } = form;
   const errors = formState.errors;
-  const photoUrl = useWatch({ control, name: "photo_url" }) ?? "";
-  const name = useWatch({ control, name: "name" }) ?? "";
 
   async function submit(values: TherapistInput) {
     setFormError(null);
@@ -99,39 +95,21 @@ export function TherapistForm({ initial = emptyTherapist, submitLabel, resetAfte
         />
       </FormField>
 
-      <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-        <div className="flex-1">
-          <FormField
-            id={f("photo_url")}
-            label="URL foto"
-            optional
-            help="Situs publik hanya menampilkan foto dari res.cloudinary.com. Rasio 1:1 paling pas."
+      <Controller
+        control={control}
+        name="photo_url"
+        render={({ field }) => (
+          <ImageUpload
+            label="Foto terapis"
+            value={field.value}
+            onChange={(value) => field.onChange(value)}
+            folder="therapists"
+            shape="circle"
+            hint="Foto persegi (1:1) paling pas."
             error={errors.photo_url?.message}
-          >
-            <Input
-              id={f("photo_url")}
-              type="url"
-              inputMode="url"
-              placeholder="https://res.cloudinary.com/…"
-              aria-invalid={!!errors.photo_url}
-              aria-describedby={fieldDescribedBy(f("photo_url"), true, !!errors.photo_url)}
-              {...register("photo_url")}
-            />
-          </FormField>
-        </div>
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-neutral-700">Pratinjau</p>
-          <div className="relative size-24 overflow-hidden rounded-full bg-sage-100">
-            {isOptimizableImage(photoUrl) ? (
-              <Image src={photoUrl} alt={name || "Pratinjau foto"} fill sizes="96px" className="object-cover" />
-            ) : (
-              <span aria-hidden="true" className="flex size-full items-center justify-center font-display text-2xl text-sage-700">
-                {initials(name) || "?"}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
+          />
+        )}
+      />
 
       <Controller
         control={control}

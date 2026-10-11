@@ -1,13 +1,13 @@
 "use client";
 
 import { useId, useState } from "react";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CircleAlert, ImageIcon, Loader2 } from "lucide-react";
+import { CircleAlert, Loader2 } from "lucide-react";
 import { FormField, fieldDescribedBy } from "@/components/admin/form-field";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { QueryError } from "@/components/query-error";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { adminTreatmentsKey, fetchAdminTreatments } from "@/lib/api/admin-catalog";
 import type { PromoInput } from "@/lib/api/admin-promos";
 import { applyApiError } from "@/lib/form-errors";
-import { isOptimizableImage } from "@/lib/images";
 
 const MAX_TREATMENTS = 20;
 const dateKey = /^\d{4}-\d{2}-\d{2}$/;
@@ -59,7 +58,6 @@ export function PromoForm({ initial, submitLabel, resetAfterSubmit = false, onSu
   const form = useForm<PromoInput>({ resolver: zodResolver(schema), defaultValues: initial });
   const { register, control, handleSubmit, setError, formState } = form;
   const errors = formState.errors;
-  const imageUrl = useWatch({ control, name: "image_url" }) ?? "";
   const startDate = useWatch({ control, name: "start_date" });
   const treatmentsQuery = useQuery({ queryKey: adminTreatmentsKey, queryFn: fetchAdminTreatments });
 
@@ -130,37 +128,21 @@ export function PromoForm({ initial, submitLabel, resetAfterSubmit = false, onSu
         </FormField>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start">
-        <FormField
-          id={f("image_url")}
-          label="URL gambar"
-          optional
-          help="Situs publik hanya menampilkan gambar dari res.cloudinary.com. Rasio 16:9 paling pas."
-          error={errors.image_url?.message}
-        >
-          <Input
-            id={f("image_url")}
-            type="url"
-            inputMode="url"
-            placeholder="https://res.cloudinary.com/…"
-            aria-invalid={!!errors.image_url}
-            aria-describedby={fieldDescribedBy(f("image_url"), true, !!errors.image_url)}
-            {...register("image_url")}
+      <Controller
+        control={control}
+        name="image_url"
+        render={({ field }) => (
+          <ImageUpload
+            label="Gambar promo"
+            value={field.value}
+            onChange={(value) => field.onChange(value)}
+            folder="promos"
+            shape="wide"
+            hint="Rasio 16:9 paling pas."
+            error={errors.image_url?.message}
           />
-        </FormField>
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-neutral-700">Pratinjau</p>
-          <div className="relative aspect-video overflow-hidden rounded-md bg-blush-100">
-            {isOptimizableImage(imageUrl) ? (
-              <Image src={imageUrl} alt="Pratinjau gambar promo" fill sizes="220px" className="object-cover" />
-            ) : (
-              <span className="flex size-full items-center justify-center text-blush-400">
-                <ImageIcon aria-hidden="true" strokeWidth={1.75} className="size-8" />
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
+        )}
+      />
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium text-neutral-700">

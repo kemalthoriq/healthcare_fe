@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useId } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CircleAlert, Loader2 } from "lucide-react";
 import { FormField, fieldDescribedBy } from "@/components/admin/form-field";
-import { TreatmentImage } from "@/components/catalog/treatment-image";
+import { ImageUpload } from "@/components/admin/image-upload";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,8 +66,6 @@ export function TreatmentForm({ initial = emptyTreatment, submitLabel, resetAfte
   const form = useForm<TreatmentInput>({ resolver: zodResolver(schema), defaultValues: initial });
   const { register, control, handleSubmit, setError, formState } = form;
   const errors = formState.errors;
-  const imageUrl = useWatch({ control, name: "image_url" });
-  const name = useWatch({ control, name: "name" });
 
   async function submit(values: TreatmentInput) {
     setFormError(null);
@@ -152,29 +150,21 @@ export function TreatmentForm({ initial = emptyTreatment, submitLabel, resetAfte
         </FormField>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-[minmax(0,1fr)_200px] sm:items-start">
-        <FormField
-          id={f("image_url")}
-          label="URL gambar"
-          optional
-          help="Situs publik hanya menampilkan gambar dari res.cloudinary.com. Rasio 4:3 paling pas."
-          error={errors.image_url?.message}
-        >
-          <Input
-            id={f("image_url")}
-            type="url"
-            inputMode="url"
-            placeholder="https://res.cloudinary.com/…"
-            aria-invalid={!!errors.image_url}
-            aria-describedby={fieldDescribedBy(f("image_url"), true, !!errors.image_url)}
-            {...register("image_url")}
+      <Controller
+        control={control}
+        name="image_url"
+        render={({ field }) => (
+          <ImageUpload
+            label="Gambar treatment"
+            value={field.value}
+            onChange={(value) => field.onChange(value)}
+            folder="treatments"
+            shape="landscape"
+            hint="Rasio 4:3 paling pas."
+            error={errors.image_url?.message}
           />
-        </FormField>
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-neutral-700">Pratinjau</p>
-          <TreatmentImage src={imageUrl ?? ""} alt={name || "Pratinjau gambar"} sizes="200px" className="rounded-md" />
-        </div>
-      </div>
+        )}
+      />
 
       <Controller
         control={control}

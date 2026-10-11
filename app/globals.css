@@ -138,19 +138,19 @@
   @apply mx-auto w-full max-w-[1200px] px-4 md:px-6 lg:px-8;
 }
 
-@utility text-display {
+@utility type-display {
   @apply font-display text-4xl leading-[1.1] font-normal lg:text-[56px];
 }
 
-@utility text-h1 {
+@utility type-h1 {
   @apply font-display text-[30px] leading-[1.2] font-normal lg:text-[40px];
 }
 
-@utility text-h2 {
+@utility type-h2 {
   @apply font-display text-2xl leading-[1.25] font-normal lg:text-[32px];
 }
 
-@utility text-overline {
+@utility type-overline {
   @apply text-xs leading-[1.4] font-semibold tracking-[0.08em] uppercase;
 }
 

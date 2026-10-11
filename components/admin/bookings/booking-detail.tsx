@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Info, MessageCircle, SearchX } from "lucide-react";
+import { ArrowLeft, History, Info, MessageCircle, SearchX } from "lucide-react";
 import { useAdminUser } from "@/components/admin/admin-user";
 import { CancelAdminDialog } from "@/components/admin/bookings/cancel-admin-dialog";
 import { ConfirmActionDialog } from "@/components/admin/bookings/confirm-action-dialog";
@@ -147,6 +147,7 @@ function DetailSkeleton() {
 }
 
 export function BookingDetail({ id }: { id: number }) {
+  const user = useAdminUser();
   const query = useQuery({ queryKey: adminBookingKey(id), queryFn: () => fetchAdminBooking(id) });
   const clinicQuery = useQuery({ queryKey: publicClinicKey, queryFn: fetchPublicClinic, staleTime: 5 * 60_000 });
   const clinicName = clinicQuery.data?.clinic_name || "Lumière Aesthetic Clinic";
@@ -230,12 +231,22 @@ export function BookingDetail({ id }: { id: number }) {
                 <p className="mt-1 whitespace-pre-line text-neutral-900">{booking.note}</p>
               </div>
             )}
-            <Button asChild variant="whatsapp" size="sm" className="mt-4">
-              <a href={bookingWhatsAppUrl(booking, clinicName)} target="_blank" rel="noopener noreferrer">
-                <MessageCircle aria-hidden="true" strokeWidth={1.75} />
-                Hubungi via WA
-              </a>
-            </Button>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button asChild variant="whatsapp" size="sm">
+                <a href={bookingWhatsAppUrl(booking, clinicName)} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle aria-hidden="true" strokeWidth={1.75} />
+                  Hubungi via WA
+                </a>
+              </Button>
+              {user.role === "admin" && (
+                <Button asChild variant="outline" size="sm">
+                  <Link href={`/admin/pasien?${new URLSearchParams({ q: booking.patient_phone })}`}>
+                    <History aria-hidden="true" strokeWidth={1.75} />
+                    Lihat riwayat pasien
+                  </Link>
+                </Button>
+              )}
+            </div>
           </Card>
 
           <Card title="Catatan treatment">

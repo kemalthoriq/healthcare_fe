@@ -41,6 +41,39 @@ export type PublicBooking = CreatedBooking & {
   cancel_deadline: string;
 };
 
+export type PromoTreatment = {
+  id: number;
+  name: string;
+  slug: string;
+  is_active: boolean;
+};
+
+export type Promo = {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  image_url: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  treatments: PromoTreatment[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type PublicClinic = {
+  clinic_name: string;
+  address: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  opening_hours_text: string;
+  min_booking_lead_minutes: number;
+  max_booking_days_ahead: number;
+  cancel_deadline_hours: number;
+};
+
 export type Therapist = {
   id: number;
   name: string;

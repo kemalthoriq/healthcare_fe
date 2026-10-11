@@ -1,6 +1,6 @@
 import { cacheLife } from "next/cache";
 import { api, isApiError } from "@/lib/api/client";
-import type { Therapist, Treatment } from "@/lib/api/types";
+import type { Promo, PublicClinic, Therapist, Treatment } from "@/lib/api/types";
 
 async function listOrEmpty<T>(path: string): Promise<T[]> {
   try {
@@ -40,4 +40,21 @@ export async function getTreatmentTherapists(slug: string): Promise<Therapist[]>
   "use cache";
   cacheLife("minutes");
   return listOrEmpty<Therapist>(`/treatments/${encodeURIComponent(slug)}/therapists`);
+}
+
+export async function getPromos(): Promise<Promo[]> {
+  "use cache";
+  cacheLife("minutes");
+  return listOrEmpty<Promo>("/promos");
+}
+
+export async function getClinic(): Promise<PublicClinic | null> {
+  "use cache";
+  cacheLife("minutes");
+  try {
+    return await api.get<PublicClinic>("/clinic");
+  } catch (err) {
+    console.error("GET /clinic failed", err);
+    return null;
+  }
 }

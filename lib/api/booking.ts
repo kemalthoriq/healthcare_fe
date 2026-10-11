@@ -1,5 +1,5 @@
 import { api, isApiError } from "@/lib/api/client";
-import type { CreatedBooking, PublicBooking, Slot, Therapist } from "@/lib/api/types";
+import type { CreatedBooking, PublicBooking, PublicClinic, Slot, Therapist } from "@/lib/api/types";
 
 export type CreateBookingInput = {
   treatment_slug: string;
@@ -45,4 +45,10 @@ export async function getBooking(code: string): Promise<PublicBooking | null> {
     }
     throw err;
   }
+}
+
+export const publicClinicKey = ["public-clinic"] as const;
+
+export function fetchPublicClinic(): Promise<PublicClinic> {
+  return api.get<PublicClinic>("/clinic");
 }

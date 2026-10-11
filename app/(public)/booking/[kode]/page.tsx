@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { CircleCheck, Clock, Info, TriangleAlert } from "lucide-react";
+import { CircleCheck, Clock, Info, MessageCircle, TriangleAlert } from "lucide-react";
 import { CancelBookingDialog } from "@/components/booking/cancel-booking-dialog";
 import { CopyCodeButton } from "@/components/booking/copy-code-button";
 import { StatusBadge } from "@/components/booking/status-badge";
@@ -10,7 +10,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBooking } from "@/lib/api/booking";
+import { getClinic } from "@/lib/api/catalog";
 import { formatDateLong, formatDuration, formatRupiah, formatTime } from "@/lib/format";
+import { whatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Status Booking",
@@ -21,7 +23,7 @@ type Props = PageProps<"/booking/[kode]">;
 
 async function BookingStatus({ params, searchParams }: Props) {
   const [{ kode }, query] = await Promise.all([params, searchParams]);
-  const booking = await getBooking(kode);
+  const [booking, clinic] = await Promise.all([getBooking(kode), getClinic()]);
 
   if (!booking) {
     notFound();
@@ -120,6 +122,22 @@ async function BookingStatus({ params, searchParams }: Props) {
             Booking ini tidak bisa dibatalkan lagi secara online. Silakan hubungi klinik bila ada perubahan.
           </AlertDescription>
         </Alert>
+      )}
+
+      {clinic?.whatsapp && (
+        <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-6">
+          <p className="flex-1 text-sm text-neutral-700">Ada pertanyaan tentang booking ini?</p>
+          <Button asChild variant="whatsapp" size="sm">
+            <a
+              href={whatsAppUrl(clinic.whatsapp, `Halo, saya ingin bertanya tentang booking ${booking.code}.`)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle aria-hidden="true" strokeWidth={1.75} />
+              Hubungi via WA
+            </a>
+          </Button>
+        </div>
       )}
     </div>
   );

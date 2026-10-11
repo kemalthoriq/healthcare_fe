@@ -17,6 +17,7 @@ import { QueryError } from "@/components/query-error";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminBookingKey, fetchAdminBooking, type AdminBooking } from "@/lib/api/admin-bookings";
+import { fetchPublicClinic, publicClinicKey } from "@/lib/api/booking";
 import { isApiError } from "@/lib/api/client";
 import { formatDateLong, formatDateShort, formatPhone, formatRupiah, formatTime } from "@/lib/format";
 import { bookingWhatsAppUrl } from "@/lib/whatsapp";
@@ -147,6 +148,8 @@ function DetailSkeleton() {
 
 export function BookingDetail({ id }: { id: number }) {
   const query = useQuery({ queryKey: adminBookingKey(id), queryFn: () => fetchAdminBooking(id) });
+  const clinicQuery = useQuery({ queryKey: publicClinicKey, queryFn: fetchPublicClinic, staleTime: 5 * 60_000 });
+  const clinicName = clinicQuery.data?.clinic_name || "Lumière Aesthetic Clinic";
   const { note } = useBookingMutations(id);
 
   const backLink = (
@@ -228,7 +231,7 @@ export function BookingDetail({ id }: { id: number }) {
               </div>
             )}
             <Button asChild variant="whatsapp" size="sm" className="mt-4">
-              <a href={bookingWhatsAppUrl(booking)} target="_blank" rel="noopener noreferrer">
+              <a href={bookingWhatsAppUrl(booking, clinicName)} target="_blank" rel="noopener noreferrer">
                 <MessageCircle aria-hidden="true" strokeWidth={1.75} />
                 Hubungi via WA
               </a>

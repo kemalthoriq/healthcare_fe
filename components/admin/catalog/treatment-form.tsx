@@ -7,6 +7,7 @@ import { z } from "zod";
 import { CircleAlert, Loader2 } from "lucide-react";
 import { FormField, fieldDescribedBy } from "@/components/admin/form-field";
 import { ImageUpload } from "@/components/admin/image-upload";
+import { RupiahInput } from "@/components/admin/rupiah-input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,8 +41,6 @@ const schema = z.object({
 });
 
 const FIELDS = ["name", "description", "image_url", "price", "duration_minutes", "is_active"] as const;
-
-const numberFormat = new Intl.NumberFormat("id-ID");
 
 type TreatmentFormProps = {
   initial?: TreatmentInput;
@@ -112,25 +111,15 @@ export function TreatmentForm({ initial = emptyTreatment, submitLabel, resetAfte
             control={control}
             name="price"
             render={({ field }) => (
-              <div className="flex h-11 items-stretch overflow-hidden rounded-md border border-input bg-card shadow-xs focus-within:border-sage-600 focus-within:ring-3 focus-within:ring-sage-100">
-                <span className="flex items-center border-r border-input bg-neutral-100 px-3 text-base text-neutral-700">
-                  Rp
-                </span>
-                <input
-                  id={f("price")}
-                  ref={field.ref}
-                  inputMode="numeric"
-                  value={Number.isFinite(field.value) ? numberFormat.format(field.value) : ""}
-                  onChange={(event) => {
-                    const digits = event.target.value.replace(/\D/g, "").slice(0, 9);
-                    field.onChange(digits === "" ? Number.NaN : Number(digits));
-                  }}
-                  onBlur={field.onBlur}
-                  aria-invalid={!!errors.price}
-                  aria-describedby={fieldDescribedBy(f("price"), false, !!errors.price)}
-                  className="min-w-0 flex-1 bg-transparent px-3.5 text-base outline-none"
-                />
-              </div>
+              <RupiahInput
+                id={f("price")}
+                ref={field.ref}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                invalid={!!errors.price}
+                describedBy={fieldDescribedBy(f("price"), false, !!errors.price)}
+              />
             )}
           />
         </FormField>

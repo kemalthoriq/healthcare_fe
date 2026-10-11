@@ -11,6 +11,7 @@ import { NeedsActionBadge } from "@/components/admin/bookings/needs-action-badge
 import { RescheduleDialog } from "@/components/admin/bookings/reschedule-dialog";
 import { TreatmentNoteForm } from "@/components/admin/bookings/treatment-note-form";
 import { useBookingMutations } from "@/components/admin/bookings/use-booking-mutations";
+import { BookingInvoice } from "@/components/admin/invoices/booking-invoice";
 import { StatusBadge } from "@/components/booking/status-badge";
 import { EmptyState } from "@/components/catalog/empty-state";
 import { QueryError } from "@/components/query-error";
@@ -269,6 +270,11 @@ export function BookingDetail({ id }: { id: number }) {
               </div>
             )}
           </Card>
+          {user.role === "admin" && booking.status === "completed" && (
+            <Card title="Invoice">
+              <BookingInvoice booking={booking} />
+            </Card>
+          )}
           <Card title="Riwayat">
             <Timeline booking={booking} />
           </Card>

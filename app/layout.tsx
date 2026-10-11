@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="id" className={`${fraunces.variable} ${jakarta.variable} h-full`}>
       <body className="flex min-h-full flex-col">
-        {children}
+        <Providers>{children}</Providers>
         <Toaster position="top-center" />
       </body>
     </html>

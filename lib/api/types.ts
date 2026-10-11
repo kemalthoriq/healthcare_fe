@@ -11,6 +11,36 @@ export type Treatment = {
   updated_at: string;
 };
 
+export type BookingStatus = "pending" | "confirmed" | "completed" | "no_show" | "cancelled";
+
+export type NamedRef = {
+  slug: string;
+  name: string;
+};
+
+export type Slot = {
+  start_at: string;
+  time: string;
+};
+
+export type CreatedBooking = {
+  code: string;
+  status: BookingStatus;
+  patient_name: string;
+  treatment: NamedRef;
+  therapist: NamedRef;
+  start_at: string;
+  end_at: string;
+  price: number;
+  note: string;
+};
+
+export type PublicBooking = CreatedBooking & {
+  cancel_reason: string;
+  can_cancel: boolean;
+  cancel_deadline: string;
+};
+
 export type Therapist = {
   id: number;
   name: string;

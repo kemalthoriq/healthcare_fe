@@ -24,7 +24,7 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="right" className="w-[85%] max-w-xs bg-card">
         <SheetHeader>
-          <SheetTitle className="font-display text-xl font-normal text-sage-700">Menu</SheetTitle>
+          <SheetTitle className="font-display text-2xl font-normal text-sage-700">Menu</SheetTitle>
           <SheetDescription className="sr-only">Navigasi halaman Lumière</SheetDescription>
         </SheetHeader>
         <nav aria-label="Navigasi seluler" className="px-4">

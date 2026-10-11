@@ -1,15 +1,7 @@
 import Image from "next/image";
 import type { Therapist } from "@/lib/api/types";
 import { isOptimizableImage } from "@/lib/images";
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter((part) => part && !part.endsWith("."))
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
+import { initials } from "@/lib/initials";
 
 export function TherapistCard({ therapist, showBio = false }: { therapist: Therapist; showBio?: boolean }) {
   return (

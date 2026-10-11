@@ -31,6 +31,18 @@ export function addMonths(monthKey: string, amount: number): string {
   return `${nextYear}-${String(nextMonth).padStart(2, "0")}`;
 }
 
+export function addDays(dateKey: string, amount: number): string {
+  return toDateKey(new Date(fromDateKey(dateKey).getTime() + amount * 86_400_000));
+}
+
+export function weekdayOf(dateKey: string): number {
+  return fromDateKey(dateKey).getUTCDay();
+}
+
+export function startOfWeek(dateKey: string): string {
+  return addDays(dateKey, -((weekdayOf(dateKey) + 6) % 7));
+}
+
 export function isDateKey(value: string | null): value is string {
   return value !== null && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }

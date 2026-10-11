@@ -11,6 +11,8 @@ import { TherapistAccountForm } from "@/components/admin/catalog/therapist-accou
 import { TherapistForm } from "@/components/admin/catalog/therapist-form";
 import { PageHeader } from "@/components/admin/page-header";
 import { SectionCard } from "@/components/admin/section-card";
+import { ScheduleEditor } from "@/components/admin/schedule/schedule-editor";
+import { TimeOffSection } from "@/components/admin/schedule/time-off-section";
 import { EmptyState } from "@/components/catalog/empty-state";
 import { QueryError } from "@/components/query-error";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -117,6 +119,15 @@ export function EditTherapist({ id }: { id: number }) {
       <PageHeader title={therapist.name} description={therapist.title} actions={<ActiveBadge active={therapist.is_active} />} />
       <SectionCard title="Profil terapis">
         <TherapistForm key={therapist.updated_at} initial={initial} submitLabel="Simpan Perubahan" onSubmit={handleUpdate} />
+      </SectionCard>
+      <SectionCard
+        title="Jadwal kerja mingguan"
+        description="Jam yang bisa dibooking pasien. Jam dipilih per 30 menit; satu hari boleh lebih dari satu shift."
+      >
+        <ScheduleEditor therapistId={id} />
+      </SectionCard>
+      <SectionCard title="Cuti" description="Selama cuti, jam kerja terapis tidak bisa dibooking.">
+        <TimeOffSection therapistId={id} />
       </SectionCard>
       <SectionCard
         title="Akun login"

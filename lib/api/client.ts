@@ -131,6 +131,8 @@ export const api = {
     data<T>(path, { ...options, method: "POST", body: body ?? {} }),
   put: <T>(path: string, body: unknown, options?: RequestOptions) =>
     data<T>(path, { ...options, method: "PUT", body }),
+  patch: <T>(path: string, body: unknown, options?: RequestOptions) =>
+    data<T>(path, { ...options, method: "PATCH", body }),
   delete: <T = void>(path: string, options?: RequestOptions) =>
     data<T>(path, { ...options, method: "DELETE" }),
 };

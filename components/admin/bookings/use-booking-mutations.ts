@@ -12,6 +12,7 @@ import {
   type AdminBooking,
   type BookingAction,
 } from "@/lib/api/admin-bookings";
+import { adminDashboardKey } from "@/lib/api/admin-dashboard";
 import { isApiError } from "@/lib/api/client";
 
 const RELOAD_CODES = ["STATUS_CHANGED", "INVALID_TRANSITION", "SLOT_TAKEN", "SLOT_UNAVAILABLE"];
@@ -29,6 +30,7 @@ export function useBookingMutations(id: number) {
     return (booking: AdminBooking) => {
       queryClient.setQueryData(adminBookingKey(id), booking);
       queryClient.invalidateQueries({ queryKey: adminBookingsKey });
+      queryClient.invalidateQueries({ queryKey: adminDashboardKey });
       toast.success(message);
     };
   }

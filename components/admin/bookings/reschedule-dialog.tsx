@@ -18,7 +18,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchAdminTherapist, fetchAdminTreatment, type AdminBooking } from "@/lib/api/admin-bookings";
+import type { AdminBooking } from "@/lib/api/admin-bookings";
+import {
+  adminTherapistKey,
+  adminTreatmentKey,
+  fetchAdminTherapist,
+  fetchAdminTreatment,
+} from "@/lib/api/admin-catalog";
 import { fetchAvailableDates, fetchSlots } from "@/lib/api/booking";
 import { addMonths, fromDateKey, fromMonthKey, toDateKey, toMonthKey } from "@/lib/dates";
 import { formatDateLong, TIME_ZONE } from "@/lib/format";
@@ -47,11 +53,11 @@ function ReschedulePicker({
   const [date, setDate] = useState<string | null>(null);
 
   const treatmentQuery = useQuery({
-    queryKey: ["admin-treatment", booking.treatment_id],
+    queryKey: adminTreatmentKey(booking.treatment_id),
     queryFn: () => fetchAdminTreatment(booking.treatment_id),
   });
   const therapistQuery = useQuery({
-    queryKey: ["admin-therapist", booking.therapist_id],
+    queryKey: adminTherapistKey(booking.therapist_id),
     queryFn: () => fetchAdminTherapist(booking.therapist_id),
   });
   const treatment = treatmentQuery.data?.slug;

@@ -22,8 +22,8 @@ export function BookingSummary({ treatment, therapist, date, time }: BookingSumm
   ];
 
   return (
-    <section aria-labelledby="ringkasan-heading" className="rounded-lg bg-card p-6 shadow-sm">
-      <h2 id="ringkasan-heading" className="text-[17px] font-semibold">
+    <section className="rounded-lg bg-card p-6 shadow-sm">
+      <h2 className="text-[17px] font-semibold">
         Ringkasan booking
       </h2>
       <dl className="mt-4 space-y-3 text-sm">

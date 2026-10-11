@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
 import { toast } from "sonner";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
@@ -35,8 +34,6 @@ function ShellSkeleton() {
 }
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const meQuery = useQuery({ queryKey: meQueryKey, queryFn: fetchMe, staleTime: 5 * 60_000 });
@@ -48,8 +45,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         toast.error("Gagal keluar. Silakan coba lagi.");
         return;
       }
-      queryClient.clear();
-      router.replace(LOGIN_PATH);
+      window.location.assign(LOGIN_PATH);
     },
   });
 
@@ -100,7 +96,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </SheetContent>
             </Sheet>
           </header>
-          <main id="konten" className="flex-1 p-4 sm:p-6">
+          <main className="flex-1 p-4 sm:p-6">
             {children}
           </main>
         </div>

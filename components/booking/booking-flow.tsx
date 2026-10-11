@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -36,6 +36,7 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
 
   const [draft, setDraft] = useState<DetailsInput>(emptyDetails);
   const [serverErrors, setServerErrors] = useState<Partial<Record<DetailsField, string>>>({});
+  const resetOnHide = useRef(false);
 
   const treatment = treatments.find((item) => item.slug === searchParams.get("treatment")) ?? null;
   const therapistSlug = treatment ? searchParams.get("therapist") : null;
@@ -73,7 +74,8 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
     mutationFn: createBooking,
     onSuccess: (booking) => {
       toast.dismiss();
-      router.push(`/booking/${booking.code}?baru=1`);
+      resetOnHide.current = true;
+      router.replace(`/booking/${booking.code}?baru=1`);
     },
     onError: (error) => {
       if (!isApiError(error)) {
@@ -107,6 +109,19 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
       toast.error(error.message);
     },
   });
+
+  const { reset: resetMutation } = mutation;
+
+  useLayoutEffect(() => {
+    return () => {
+      if (resetOnHide.current) {
+        resetOnHide.current = false;
+        resetMutation();
+        setDraft(emptyDetails);
+        setServerErrors({});
+      }
+    };
+  }, [resetMutation]);
 
   function handleSubmit(values: DetailsValues) {
     if (!treatment || !therapist || !date || !time) {

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { DashboardWelcome } from "@/components/admin/dashboard-welcome";
+import { Dashboard } from "@/components/admin/dashboard";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
 export default function AdminDashboardPage() {
-  return <DashboardWelcome />;
+  return <Dashboard />;
 }

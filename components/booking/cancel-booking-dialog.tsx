@@ -66,7 +66,7 @@ export function CancelBookingDialog({ code }: { code: string }) {
             id="cancel-reason"
             value={reason}
             onChange={(event) => setReason(event.target.value)}
-            maxLength={500}
+            maxLength={200}
             rows={3}
           />
         </div>

@@ -45,6 +45,8 @@ type DetailsStepProps = {
   defaultValues: DetailsInput;
   serverErrors: Partial<Record<DetailsField, string>>;
   submitting: boolean;
+  submitBlocked?: boolean;
+  captcha?: React.ReactNode;
   onChange: (values: DetailsInput) => void;
   onSubmit: (values: DetailsValues) => void;
   onBack: () => void;
@@ -62,7 +64,16 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   );
 }
 
-export function DetailsStep({ defaultValues, serverErrors, submitting, onChange, onSubmit, onBack }: DetailsStepProps) {
+export function DetailsStep({
+  defaultValues,
+  serverErrors,
+  submitting,
+  submitBlocked = false,
+  captcha,
+  onChange,
+  onSubmit,
+  onBack,
+}: DetailsStepProps) {
   const uid = useId();
   const f = (name: string) => `${uid}-${name}`;
   const form = useForm<DetailsInput, unknown, DetailsValues>({
@@ -153,7 +164,7 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
           {...register("email")}
         />
         <p id={f("email-help")} className="text-sm text-muted-foreground">
-          Agar klinik bisa menghubungi Anda lewat email.
+          Untuk menerima detail booking lewat email.
         </p>
         <FieldError id={f("email-error")} message={errors.email?.message} />
       </div>
@@ -199,7 +210,9 @@ export function DetailsStep({ defaultValues, serverErrors, submitting, onChange,
         <FieldError id={f("consent-error")} message={errors.consent?.message} />
       </div>
 
-      <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={submitting}>
+      {captcha}
+
+      <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={submitting || submitBlocked}>
         {submitting && <Loader2 aria-hidden="true" className="animate-spin" />}
         Kirim Booking
       </Button>

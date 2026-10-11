@@ -17,6 +17,7 @@ import { Stepper } from "@/components/booking/stepper";
 import { TherapistStep } from "@/components/booking/therapist-step";
 import { TimeStep, slotsQueryKey } from "@/components/booking/time-step";
 import { TreatmentStep } from "@/components/booking/treatment-step";
+import { TurnstileWidget } from "@/components/booking/turnstile-widget";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createBooking, fetchTreatmentTherapists } from "@/lib/api/booking";
 import { isApiError } from "@/lib/api/client";
@@ -27,6 +28,7 @@ const PARAM_ORDER = ["treatment", "therapist", "date", "time"] as const;
 type Param = (typeof PARAM_ORDER)[number];
 
 const DETAIL_FIELDS: DetailsField[] = ["name", "phone", "email", "note", "consent"];
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
   const router = useRouter();
@@ -37,6 +39,8 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
   const [draft, setDraft] = useState<DetailsInput>(emptyDetails);
   const [serverErrors, setServerErrors] = useState<Partial<Record<DetailsField, string>>>({});
   const resetOnHide = useRef(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const treatment = treatments.find((item) => item.slug === searchParams.get("treatment")) ?? null;
   const therapistSlug = treatment ? searchParams.get("therapist") : null;
@@ -78,6 +82,7 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
       router.replace(`/booking/${booking.code}?baru=1`);
     },
     onError: (error) => {
+      setCaptchaKey((value) => value + 1);
       if (!isApiError(error)) {
         toast.error("Booking belum berhasil dikirim. Silakan coba lagi.");
         return;
@@ -137,6 +142,7 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
       email: values.email,
       note: values.note,
       consent: values.consent,
+      captcha_token: captchaToken ?? "",
     });
   }
 
@@ -202,6 +208,12 @@ export function BookingFlow({ treatments }: { treatments: Treatment[] }) {
               defaultValues={draft}
               serverErrors={serverErrors}
               submitting={mutation.isPending || mutation.isSuccess}
+              submitBlocked={TURNSTILE_SITE_KEY !== "" && !captchaToken}
+              captcha={
+                TURNSTILE_SITE_KEY ? (
+                  <TurnstileWidget key={captchaKey} siteKey={TURNSTILE_SITE_KEY} onToken={setCaptchaToken} />
+                ) : null
+              }
               onChange={setDraft}
               onSubmit={handleSubmit}
               onBack={() => go("time", null)}

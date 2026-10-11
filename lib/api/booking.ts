@@ -10,6 +10,7 @@ export type CreateBookingInput = {
   email: string;
   note: string;
   consent: boolean;
+  captcha_token: string;
 };
 
 function query(params: Record<string, string>): string {
@@ -36,9 +37,13 @@ export function cancelBooking(code: string, reason: string): Promise<PublicBooki
   return api.post<PublicBooking>(`/bookings/${encodeURIComponent(code)}/cancel`, { reason });
 }
 
-export async function getBooking(code: string): Promise<PublicBooking | null> {
+export function publicBookingKey(code: string) {
+  return ["public-booking", code.trim().toUpperCase()] as const;
+}
+
+export async function fetchBooking(code: string): Promise<PublicBooking | null> {
   try {
-    return await api.get<PublicBooking>(`/bookings/${encodeURIComponent(code)}`, { cache: "no-store" });
+    return await api.get<PublicBooking>(`/bookings/${encodeURIComponent(code.trim())}`);
   } catch (err) {
     if (isApiError(err, "NOT_FOUND")) {
       return null;

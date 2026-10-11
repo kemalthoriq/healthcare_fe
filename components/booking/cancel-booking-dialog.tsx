@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useId } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -20,28 +19,30 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cancelBooking } from "@/lib/api/booking";
 import { isApiError } from "@/lib/api/client";
+import type { PublicBooking } from "@/lib/api/types";
 
-export function CancelBookingDialog({ code }: { code: string }) {
+type CancelBookingDialogProps = {
+  code: string;
+  onDone: (booking: PublicBooking | null) => void;
+};
+
+export function CancelBookingDialog({ code, onDone }: CancelBookingDialogProps) {
   const uid = useId();
   const f = (name: string) => `${uid}-${name}`;
-  const router = useRouter();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
 
   const mutation = useMutation({
     mutationFn: () => cancelBooking(code, reason.trim()),
-    onSuccess: () => {
+    onSuccess: (booking) => {
       toast.success("Booking Anda telah dibatalkan.");
       setOpen(false);
-      router.replace(pathname);
-      router.refresh();
+      onDone(booking);
     },
     onError: (error) => {
       toast.error(isApiError(error) ? error.message : "Pembatalan belum berhasil. Silakan coba lagi.");
       setOpen(false);
-      router.replace(pathname);
-      router.refresh();
+      onDone(null);
     },
   });
 

@@ -21,18 +21,36 @@ export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
   readonly fields: Record<string, string>;
+  readonly retryAfter: number | null;
 
-  constructor(status: number, code: string, message: string, fields: Record<string, string> = {}) {
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    fields: Record<string, string> = {},
+    retryAfter: number | null = null,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
     this.fields = fields;
+    this.retryAfter = retryAfter;
   }
 }
 
 const NETWORK_MESSAGE = "Tidak dapat terhubung ke server. Periksa koneksi Anda lalu coba lagi.";
 const UNKNOWN_MESSAGE = "Terjadi kesalahan pada server. Silakan coba beberapa saat lagi.";
+const TIMEOUT_MESSAGE = "Server membutuhkan waktu lebih lama dari biasanya. Silakan coba lagi.";
+const REQUEST_TIMEOUT_MS = 60_000;
+
+function rateLimitMessage(seconds: number | null): string {
+  if (!seconds) {
+    return "Terlalu banyak percobaan. Silakan coba lagi nanti.";
+  }
+  const wait = seconds < 60 ? `${seconds} detik` : `${Math.ceil(seconds / 60)} menit`;
+  return `Terlalu banyak percobaan. Silakan coba lagi dalam ${wait}.`;
+}
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
@@ -49,7 +67,7 @@ function baseUrl(): string {
   return url.replace(/\/+$/, "");
 }
 
-async function request<T>(path: string, { body, headers, ...init }: RequestOptions = {}): Promise<T> {
+async function request<T>(path: string, { body, headers, signal, ...init }: RequestOptions = {}): Promise<T> {
   const finalHeaders = new Headers(headers);
   finalHeaders.set("Accept", "application/json");
   if (body !== undefined) {
@@ -62,8 +80,17 @@ async function request<T>(path: string, { body, headers, ...init }: RequestOptio
       ...init,
       headers: finalHeaders,
       body: body === undefined ? undefined : JSON.stringify(body),
+      signal: signal
+        ? AbortSignal.any([signal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)])
+        : AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "TimeoutError") {
+      throw new ApiError(0, "TIMEOUT", TIMEOUT_MESSAGE);
+    }
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw err;
+    }
     throw new ApiError(0, "NETWORK_ERROR", NETWORK_MESSAGE);
   }
 
@@ -72,6 +99,11 @@ async function request<T>(path: string, { body, headers, ...init }: RequestOptio
   }
 
   const payload: unknown = await res.json().catch(() => null);
+
+  if (res.status === 429) {
+    const retryAfter = Number(res.headers.get("Retry-After")) || null;
+    throw new ApiError(429, "RATE_LIMITED", rateLimitMessage(retryAfter), {}, retryAfter);
+  }
 
   if (!res.ok) {
     const err = (payload as ErrorBody | null)?.error;
